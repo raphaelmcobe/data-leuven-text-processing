@@ -32,558 +32,716 @@
                data-charset="iso-8859-15"
                style="text-align: left;">
         <textarea data-template>
-          ## Introduction/Motivation
-          <!-- .slide: data-background="#6d8ba7" -->
-
-          --
-
-          ### A (few) word (s) on unstructure data
-          - Structured or Semistructured data includes fields or markup that
-          enable it to be <span class="highlight">easily parsed by a
-          computer</span>;
-          - Language is <span class="highlight">unstructured data</span> that
-          has been <span class="highlight">produced by people</span> to
-          be <span class="highlight">understood by other people</span>;
-          - Retrieving information from unstructured data <span
-            class="highlight">is essential</span>!  - It is estimated that [80%
-          of the world’s data is
-          unstructured](https://www.ibm.com/blogs/watson/2016/05/biggest-data-challenges-might-not-even-know/).
-          - Unstructured data <span class="fragment highlight-red">*is not
-            random!*</span>
-            - Linguistic properties that make it very understandable to other
-            people <!-- .element: class="fragment" -->
-
-          --
-
-          ### Language as Data
-          - Text mining:
-            - Process of deriving insights from (unstructured) text data;
-          - Natural Language Processing (NLP): 
-            - Part of computer science and artificial intelligence which deals
-            with human languages.  - Sentiment Analysis:
-            - Just a small variant of Text mining;
-
-          Note:
-          This is a simple note
-          - Test 
-          - Test2
-
-          --
-
-          ### Understanding text is hard
-          - Real-world data is often <span class="highlight-r">messy</span> and <span class="highlight-r">noisy</span>;
-          - Several factors that makes this process hard:
-            - Encoding scheme used (ASCII, UTF-8, UTF-16, Latin-1, etc.); <!-- .element: class="fragment" -->
-            - hundreds of natural languages, each of which has different syntax
-            rules; <!-- .element: class="fragment" -->
-            - Words can be ambiguous (dependent on their context);<!-- .element: class="fragment" -->
-            - case-sensitive, punctuation, numbers, hyperlinks, the use of
-            emoticons and emojis <!-- .element: class="fragment" --> <span>&#x1F61C;</span><!-- .element: class="fragment" -->
-            - synonyms, abbreviation, acronyms, and spelling errors;<!-- .element: class="fragment" -->
-          - often need to understand which words in a sentence are nouns and
-          which are verbs; <!-- .element: class="fragment" -->
-
-          ---
-
-          ## Processing Textual data
-          <!-- .slide: data-background="#6d8ba7" -->
-
-          --
-
-          ### How to process textual data?
-          - “the numbers don’t lie” and not “the text doesn’t lie”;
-          - Machine learning: 
-            - train statistical models on language as it changes;
-          - building models of language on <span class="highlight">
-            context-specific corpora</span>;
-          - Model that describes language and can make inferences based on that
-          description
-          - To take advantage of the predictability of text, we need to define
-          a constrained, numeric decision space on which the model can compute;
-
-          --
-
-          ### How to process textual data?
-          - Break the text processing into steps:
-            - <span class="fragment highlight-blue">Finding Parts of Text</span>
-            - Finding Sentences
-            - Finding People and Things
-            - Detecting Parts of Speech
-            - <span class="fragment highlight-blue">Classifying Text and
-              Documents</span>
-            - Extracting Relationships
-            - Combined Approaches 
-          
-          ---
-          <!-- .slide: data-background="#6d8ba7" -->
-          ## Finding Parts of Text
-
-          Examples taken from [Real Python Regular Expressions
-          Tutorial](https://realpython.com/regex-python/)
-          --
-
-          ### Regular Expressions
-          A (very) brief history
-          - In 1951, mathematician Stephen Cole Kleene described the concept of
-          a regular language, a language that is recognizable by a finite
-          automaton;
-          -  In the mid-1960s, computer science pioneer Ken Thompson, one of
-          the original designers of Unix, implemented pattern matching in the
-          QED text editor;
-          - Appeared in many programming languages, editors, and other tools as
-          a means of determining whether a string matches a specified pattern;
-
-          --
-        
-          ### The Python `re` module
-          - Regex functionality in Python resides in a module named `re`. The
-          `re` module contains many useful functions and methods. Let's play a
-          little bit with the `search()` function:
-          - `re.search(<regex>, <string>)`
-
-          ```python[1|2|3-4]
-          >>> import re
-          >>> text = "foo123foo"
-          >>> re.search("123", text)
-          <re.Match object; span=(3, 6), match='123'>
-          ```
-
-          --
-        
-          ### The Python `re` module
-          - `span=(3, 6)` indicates the portion of `<string>` in which the
-          match was found. This means the same thing as it would in slice
-          notation:
-
-          ```python[1|2]
-          >>> text[3:6]
-          '123'
-          ```
-
-          --
-
-          ### Regular Expressions in Python
-          - Any character or sequence of carachters is a valid regular
-          expression;
-          - The `search()` function returns the first sequence of characters
-          that matches the RE;
-
-          ```python[2-3|4-5]
-          >>> text="abc123abc"
-          >>> re.search("a", text)
-          <re.Match object; span=(0, 1), match='a'>
-          >>> re.search("abc", text)
-          <re.Match object; span=(0, 3), match='abc'>
-          ```
-
-          --
-
-          ### Regular Expressions in Python
-          Metacharacters
-          - Real power of regex matching in Python emerges when `<regex>`
-          contains special characters called <span class="highlight">metacharacters</span>;
-          - Unique meaning to the regex matching engine;
-          - **Character class**:
-            - Matches any single character that is in the class;
-            - Defined using square brackets ([]);
-            - Can be used to specify intervals
-          ```python[1-2|3-4|5-6|7-8]
-          >>> re.search('[0-9]', "abc123abc")
-          <re.Match object; span=(3, 4), match='1'>
-          >>> re.search('[2-9]', "abc123abc")
-          <re.Match object; span=(4, 5), match='2'>
-          >>> re.search('[0-9][0-9][0-9]', "abc123abc")
-          <re.Match object; span=(3, 6), match='123'>
-          >>> re.search('[2-9][0-9]', "abc123abc")
-          <re.Match object; span=(4, 6), match='23'>
-          ```
-
-          --
-
-          ### Regular Expressions in Python
-          Metacharacters - character classes
-          - Can have all the characters enumerated:
-          ```python[1-2|3-4]
-          >>> re.search('ab[cde]', "abc123abc")
-          <re.Match object; span=(0, 3), match='abc'>
-          >>> re.search('ab[cde]', "abd123abc")
-          <re.Match object; span=(0, 3), match='abd'>
-          ```
-          - Complement a character class by specifying `^` as the first
-          character:
-          ```python
-          >>> re.search('ab[^cde]', "abc abd abe abf")
-          <re.Match object; span=(12, 15), match='abf'>
-          ```
-
-          --
-
-          ### Regular Expressions in Python
-          Metacharacters
-          -  The dot (.) metacharacter matches any character except a newline,
-          so it functions like a wildcard:
-
-          ```python[1-2|3-4]
-          >>> re.search('1.3', "abc123abc")
-          <re.Match object; span=(3, 6), match='123'>
-          >>> print(re.search('foo.bar', 'foobar'))
-          None
-          ```
-
-          --
-
-          ### Regular Expressions in Python
-          Metacharacters
-          - Quantifiers:
-            - Indicates how many times that portion must occur for the match to succeed
-            - `*` matches zero or more repetitions of the preceding regex:
-            ```python[1-2|3-4|5-6]
-            >>> re.search('foo-*bar', 'foobar')  # Zero dashes
-            <re.Match object; span=(0, 6), match='foobar'>
-            >>> re.search('foo-*bar', 'foo-bar') # One dash
-            <re.Match object; span=(0, 7), match='foo-bar'>
-            >>> re.search('foo-*bar', 'foo--bar') # Two dashes
-            <re.Match object; span=(0, 8), match='foo--bar'>
-            ```
-            - `.*` This matches zero or more occurrences of any character:
-            ```python
-            >>> re.search('foo.*bar', '# foo $qux@grault % bar #')
-            <re.Match object; span=(2, 23), match='foo $qux@grault % bar'>
-            ```
-
-          --
-
-          ### Regular Expressions in Python
-          Metacharacters
-          - Quantifiers:
-            - `+` matches one or more repetitions of the preceding regex;
-            - `?` matches zero or one repetitions of the preceding regex;
-            - `{m}` matches exactly `m` repetitions of the preceding regex;
-            - `{m,n}` matches any number of repetitions of the preceding regex
-            from `m` to `n`, inclusive.
-
-          --
-
-          ### Regular Expressions in Python
-          Metacharacters
-          - Anchors: zero-width matches. 
-            - Don’t match any actual characters in the search string;
-            - Dictates a particular location in the search string where a match
-            must occur;
-            - `^` or `\A` anchor a match to the start of the text:
-            ```python[1-2|3-4]
-            >>> re.search('^foo', 'foobar')
-            <re.Match object; span=(0, 3), match='foo'>
-            >>> re.search('^foo', 'barfoo')
-            None
-            ```
-            - `$` or `\Z` anchor a match to the end of the text:
-            ```python[1-2|3-4]
-            >>> re.search('bar$', 'foobar')
-            <re.Match object; span=(3, 6), match='bar'>
-            >>> re.search('bar$', 'barfoo')
-            None
-            ```
-          
-          --
-
-          ### Regular Expressions
-          Why are they so important?
-          
-          - Removing uninportant text:
-            - Use the `re.sub()` function;
-            - Strip all non alphanumerical characters:
-          ```python
-          >>> re.sub('[^a-zA-Z0-9_]+', '', "foo1!bar#~2")
-          'foo1bar2'
-          ```
-            - Remove all punctuation signs (`\s` represents any whitespace
-            character):
-          ```python
-          >>> re.sub("[^a-zA-Z0-9_]\s",' ',"Foo. Bar? Foo.Bar")
-          'Foo Bar Foo.Bar'
-          ```
-            - Remove all numbers from the text:
-          ```python
-          >>> re.sub('[0-9]+', '', "Foo 123 Bar 456")
-          'Foo  Bar '
-          ```
-
-          ---
-          ## Further Cleaning the Text
-          <!-- .slide: data-background="#6d8ba7" -->
-          Standard text mining procedures to extract useful features from the
-          news contents, including:
-          <ul>
-            <li><b>tokenization</b>,</li>
-            <li><b>removing stopwords</b>, and </li>
-            <li><b>lemmatization/stemming</b></li>
-          </ul>
-
-          --
-
-          ### Tokenization
-          - The process of breaking strings into tokens which in turn are small
-          structures or units;
-          - Taking individual words rather than sentences breaks down the
-          connections between words
-          - It is efficient and convenient for computers to analyze
-          - Most of the times, discovering what words appear in a text and
-          counting the times that these words appear is sufficient to give
-          insightful results;
-          - Transforms a text into a list of words;
-          - Remove useless information (using Regular Expressions!)
-
-          --
-
-          ### Python [Natural Language Toolkit - NLTK](https://www.nltk.org/)
-          - Leading platform for building Python programs to work with human
-          language data
-          - A wonderful tool for teaching, and working in, computational
-          linguistics using Python;
-          - Free reference [book](http://www.nltk.org/book/)
-          - Open Source;
-          ```python
-          >>> import nltk
-          >>> nltk.download()
-          ```
-
-          --
-
-          ### Python [Natural Language Toolkit - NLTK](https://www.nltk.org/)
-          Tokenization
-          ```python[1-2|4-8|10-11]
-          # importing word_tokenize from nltk
-          from nltk.tokenize import word_tokenize
-          
-          text = """
-          Ground control to Major Tom (10, 9, 8, 7).
-          Commencing countdown, engines on (6, 5, 4, 3).
-          Check ignition, and may God's love be with you (2, 1, lift off).
-          """
-
-          token = word_tokenize(text)
-          print(token)
-
-          ```
-          ```
-          ['Ground', 'control', 'to', 'Major', 'Tom', '(', '10', ',', '9', ',', '8', ',', '7', ')', '.', 'Commencing', 'countdown', ',', 'engines', 'on', '(', '6', ',', '5', ',', '4', ',', '3', ')', '.', 'Check', 'ignition', ',', 'and', 'may', 'God', "'s", 'love', 'be', 'with', 'you', '(', '2', ',', '1', ',', 'lift', 'off', ')', '.']
-          ```
-
-          --
-
-          ### Python [Natural Language Toolkit - NLTK](https://www.nltk.org/)
-          Cleaning Before Tokenization
-          ```python[1-2|4-5|7-8|10-12|14-16]
-          # Remove non alphanumeric character 
-          text = re.sub("[^a-zA-Z0-9]",' ',text)
-
-          # Remove all numbers
-          text = re.sub('[0-9]+', '', text)
-
-          # Remove extra whitespaces
-          text = re.sub('\s+', ' ', text)
-
-          # Remove beginning and trailing whitespaces
-          text = re.sub('^\s', '', text)
-          text = re.sub('\s$', '', text)
-          ```
-
-
-          --
-
-          ### Python [Natural Language Toolkit - NLTK](https://www.nltk.org/)
-          Tokenization
-          ```python
-          # Now tokenize
-          token = word_tokenize(text)
-          print(token)
-          ```
-          ```
-          ['Ground', 'control', 'to', 'Major', 'Tom', 'Commencing', 'countdown', 'engines', 'on', 'Check', 'ignition', 'and', 'may', 'God', 's', 'love', 'be', 'with', 'you', 'lift', 'off']
-          ```
-          - Finding the frequency distinct in the tokens
-          ```python[1|3-4]
-          from nltk.probability import FreqDist
-          fdist = FreqDist(token)
-          fdist
-          ```
-
-          ```
-          FreqDist({'Ground': 1, 'control': 1, 'to': 1, 'Major': 1, 'Tom': 1, 'Commencing': 1, 'countdown': 1, 'engines': 1, 'on': 1, 'Check': 1, ...})
-          ```
-
-          --
-
-          ### Python [Natural Language Toolkit - NLTK](https://www.nltk.org/)
-          Tokenization
-          - Let's Inspect the lines from
-          [Ghostbusters](https://www.imdb.com/title/tt0087332/) from the
-          [Cornell Movie Lines
-          Corpus](https://www.cs.cornell.edu/~cristian/Cornell_Movie-Dialogs_Corpus.html):
-
-          ```python[1-3|5-6|8-10]
-          # load data and concatenate all lyrics
-          movie_db = pd.read_csv("./movie_lines_db.csv")
-          ghostbusters_lines = movie_db[movie_db['movie_name']=='ghostbusters'].iloc[0,1]
-
-          # tokenize
-          token = word_tokenize(ghostbusters_lines)
-
-          # build the frequency distribution and print the top 10 occurences:
-          fdist = FreqDist(token)
-          fdist.most_common(10)
-          ```
-          ```
-[('.', 535), ('I', 223), (',', 201), ('the', 162), ('?', 160), ('you', 158), ('to', 123), ('a', 110), ("'s", 85), ('it', 82)]
-          ```
-
-          --
-          
-          ### Removing Stop Words
-          - Remove the useless words;
-          - Words that frequently appear in many text fragments, but without
-          significant meanings;
-          - Do not provide any meaning and are usually removed from texts
-          - e.g.: ‘I’, ‘the’, ‘a’, ‘of’
-          - Import the stopwords from the NLTK library;
-
-          --
-
-          ### Python [Natural Language Toolkit - NLTK](https://www.nltk.org/)
-          Removing stopwords 
-          - Continuing with the
-          [Ghostbusters](https://www.imdb.com/title/tt0087332/) lines from the
-          [Cornell Movie Lines
-          Corpus](https://www.cs.cornell.edu/~cristian/Cornell_Movie-Dialogs_Corpus.html):
-
-          ```python
-          # importing stopwors from nltk library
-          from nltk import word_tokenize
-          from nltk.corpus import stopwords
-          english_stopwords = set(stopwords.words('english'))
-
-          # Create list of tokens coverting all text to lower case
-          ghostbusters_token = word_tokenize(ghostsbusters_lines.lower())
-
-          # List words from lines that are not in the set of stopwords
-          clean_lines = [word for word in ghostbusters_token if word not in
-          english_stopwords]
-          print(clean_lines)
-          ```
-          ```
-          ["'s", 'matter', ',', 'dear', '?', 'uuuuuuugh', '!', '!', 'hey', ',',
-          'sweetheart', ',', 'cut',...]
-          ```
-
-          --
-          
-          ### Stemming
-          - refers to normalizing words into its base form or root form;
-          - two methods in Stemming namely, Porter Stemming (removes common
-          morphological and inflectional endings from words) and Lancaster
-          Stemming (a more aggressive stemming algorithm)
-          --
-
-          ### Python [Natural Language Toolkit - NLTK](https://www.nltk.org/)
-          Removing stopwords 
-          - Continuing with the
-          [Ghostbusters](https://www.imdb.com/title/tt0087332/) lines from the
-          [Cornell Movie Lines
-          Corpus](https://www.cs.cornell.edu/~cristian/Cornell_Movie-Dialogs_Corpus.html):
-
-          ```python
-          # Importing Porterstemmer from nltk library
-          from nltk.stem import PorterStemmer
-          pst = PorterStemmer()
-          
-          stemmed_tokens = [pst.stem(word) for word in clean_lines]
-          print(stemmed_tokes)
-          ```
-          ```
-          [...,'probabl', 'would', "'ve", '.', "n't", 'glad', 'wait', '?','go', 'say', '``', 'eight', '.', "''", "'re", 'fantast', '!','eight', "o'clock", '?', 'okay', '.', 'give', 'second', '.','leav',...]
-          ```
-
-          ---
-          ## Sentiment Analysis
-          <!-- .slide: data-background="#6d8ba7" -->
-
-          --
-          ### Sentiment Analysis
-          - Also known as opinion mining;
-          - Used to determine whether data is positive, negative or neutral;
-            - focus on polarity (positive, negative, neutral);
-          - Help businesses monitor brand and product sentiment in customer
-          feedback, and understand customer needs;
-          - Can use heavy Machine Learning techniques, such as Artificial
-          Neural Networks, or can be based on Rules;
-
-
-          --
-          ### Sentiment Analysis
-          Rule Based
-          - Include various NLP techniques developed in computational
-          linguistics, such as: Stemming, Tokenization, and Text cleaning;
-          - Use of Sentiment Lexicons (i.e. lists of words and expressions);
-          - Very naive since they don't take into account how words are
-          combined in a sequence;
-            - Leave out the context;
-          - Often require fine-tuning and maintenance;
-
-          --
-          ### Python Sentiment Analysis
-          After cleaning, tokenizing and stemming the text:
-          - Use well-known lexicons, e.g.: [The subjectivity
-          lexicon](http://mpqa.cs.pitt.edu/lexicons/subj_lexicon/) or the 
-          [Valence Aware Dictionary and sEntiment Reasoner -
-          VADER](https://github.com/cjhutto/vaderSentiment)
-
-          ```python[1-4|6-7|9-11|13-14]
-          # first load VADER
-          import nltk
-          from nltk.sentiment.vader import SentimentIntensityAnalyzer
-          nltk.download('vader_lexicon')
-
-          # instantiate the sentiment analyzer:
-          vader = SentimentIntensityAnalyzer()
-
-          # check scores for some phrases:
-          print(vader.polarity_scores("This was the best idea I've had in a long time"))
-          {'neg': 0.0, 'neu': 0.682, 'pos': 0.318, 'compound': 0.6369}
-
-          print(vader.polarity_scores("This was the worst idea I've had in a long time"))
-          {'neg': 0.313, 'neu': 0.687, 'pos': 0.0, 'compound': -0.6249}
-          ```
-          
-          ---
-          ## Questions?
-          <!-- .slide: data-background="#6d8ba7" -->
-
-          ---
-          ## References
-
-          --
-          ### Examples mainly taken from: 
-          - https://towardsdatascience.com/fine-grained-sentiment-analysis-in-python-part-1-2697bb111ed4
-          - https://monkeylearn.com/sentiment-analysis/
-          - https://medium.com/towards-artificial-intelligence/text-mining-in-python-steps-and-examples-78b3f8fd913b
-          - https://towardsdatascience.com/a-step-by-step-tutorial-for-conducting-sentiment-analysis-a7190a444366
-          - https://towardsdatascience.com/getting-started-with-text-analysis-in-python-ca13590eb4f7
-
-          --
-          ### Some books:
-          - Ingersoll, Grant, Thomas Morton, and Andrew Farris. "Taming text." How to Find, Organize, and Manipulate It, Shelter Island, NY/London (2013).
-          - BIRD, Steven; KLEIN, Ewan; LOPER, Edward. Natural language processing with Python: analyzing text with the natural language toolkit. " O'Reilly Media, Inc.", 2009.
-          - VASILIEV, Yuli. Natural Language Processing with Python and SpaCy: A Practical Introduction. No Starch Press, 2020.
-          - BENGFORT, Benjamin; BILBRO, Rebecca; OJEDA, Tony. Applied text analysis with python: Enabling language-aware data products with machine learning. " O'Reilly Media, Inc.", 2018.
-
-          ---
-          ## Thanks!
-          <!-- .slide: data-background="#6d8ba7" -->
-          <br/><br/><br/><br/>
-          #### raphaelmcobe@gmail.com
-          #### [@raphaelmcobe](twitter.com/raphaelmcobe)
-          #### [CODATA-RDA Data Science Schools](https://www.datascienceschools.org/)
+## Introduction/Motivation
+<!-- .slide: data-background="#6d8ba7" -->
+--
+### A (few) word (s) on unstructure data
+- Structured or Semistructured data includes fields or markup that
+enable it to be <span class="highlight">easily parsed by a
+computer</span>;
+- Language is <span class="highlight">unstructured data</span> that
+has been <span class="highlight">produced by people</span> to
+be <span class="highlight">understood by other people</span>;
+- Retrieving information from unstructured data <span
+  class="highlight">is essential</span>!  - It is estimated that [80%
+of the world’s data is
+unstructured](https://www.ibm.com/blogs/watson/2016/05/biggest-data-challenges-might-not-even-know/).
+- Unstructured data <span class="fragment highlight-red">*is not
+  random!*</span>
+  - Linguistic properties that make it very understandable to other
+  people <!-- .element: class="fragment" -->
+--
+### Language as Data
+- Text mining:
+  - Process of deriving insights from (unstructured) text data;
+- Natural Language Processing (NLP): 
+  - Part of computer science and artificial intelligence which deals
+  with human languages.  - Sentiment Analysis:
+  - Just a small variant of Text mining;
+Note:
+This is a simple note
+- Test 
+- Test2
+--
+### Understanding text is hard
+- Real-world data is often <span class="highlight-r">messy</span> and <span class="highlight-r">noisy</span>;
+- Several factors that makes this process hard:
+  - Encoding scheme used (ASCII, UTF-8, UTF-16, Latin-1, etc.); <!-- .element: class="fragment" -->
+  - hundreds of natural languages, each of which has different syntax
+  rules; <!-- .element: class="fragment" -->
+  - Words can be ambiguous (dependent on their context);<!-- .element: class="fragment" -->
+  - case-sensitive, punctuation, numbers, hyperlinks, the use of
+  emoticons and emojis <!-- .element: class="fragment" --> <span>&#x1F61C;</span><!-- .element: class="fragment" -->
+  - synonyms, abbreviation, acronyms, and spelling errors;<!-- .element: class="fragment" -->
+- often need to understand which words in a sentence are nouns and
+which are verbs; <!-- .element: class="fragment" -->
+---
+## Processing Textual data
+<!-- .slide: data-background="#6d8ba7" -->
+--
+### How to process textual data?
+- “the numbers don’t lie” and not “the text doesn’t lie”;
+- Machine learning: 
+  - train statistical models on language as it changes;
+- building models of language on <span class="highlight">
+  context-specific corpora</span>;
+- Model that describes language and can make inferences based on that
+description
+- To take advantage of the predictability of text, we need to define
+a constrained, numeric decision space on which the model can compute;
+--
+### How to process textual data?
+- Break the text processing into steps:
+  - <span class="fragment highlight-blue">Finding Parts of Text</span>
+  - Finding Sentences
+  - Finding People and Things
+  - Detecting Parts of Speech
+  - <span class="fragment highlight-blue">Classifying Text and
+    Documents</span>
+  - Extracting Relationships
+  - Combined Approaches 
+
+---
+<!-- .slide: data-background="#6d8ba7" -->
+## Finding Parts of Text
+Examples taken from [Real Python Regular Expressions
+Tutorial](https://realpython.com/regex-python/)
+--
+### Regular Expressions
+A (very) brief history
+- In 1951, mathematician Stephen Cole Kleene described the concept of
+a regular language, a language that is recognizable by a finite
+automaton;
+-  In the mid-1960s, computer science pioneer Ken Thompson, one of
+the original designers of Unix, implemented pattern matching in the
+QED text editor;
+- Appeared in many programming languages, editors, and other tools as
+a means of determining whether a string matches a specified pattern;
+--
+
+### The Python `re` module
+- Regex functionality in Python resides in a module named `re`. The
+`re` module contains many useful functions and methods. Let's play a
+little bit with the `search()` function:
+- `re.search(<regex>, <string>)`
+```python[1|2|3-4]
+>>> import re
+>>> text = "foo123foo"
+>>> re.search("123", text)
+<re.Match object; span=(3, 6), match='123'>
+```
+--
+
+### The Python `re` module
+- `span=(3, 6)` indicates the portion of `<string>` in which the
+match was found. This means the same thing as it would in slice
+notation:
+```python[1|2]
+>>> text[3:6]
+'123'
+```
+--
+### Regular Expressions in Python
+- Any character or sequence of carachters is a valid regular
+expression;
+- The `search()` function returns the first sequence of characters
+that matches the RE;
+```python[2-3|4-5]
+>>> text="abc123abc"
+>>> re.search("a", text)
+<re.Match object; span=(0, 1), match='a'>
+>>> re.search("abc", text)
+<re.Match object; span=(0, 3), match='abc'>
+```
+--
+### Regular Expressions in Python
+Metacharacters
+- Real power of regex matching in Python emerges when `<regex>`
+contains special characters called <span class="highlight">metacharacters</span>;
+- Unique meaning to the regex matching engine;
+- **Character class**:
+  - Matches any single character that is in the class;
+  - Defined using square brackets ([]);
+  - Can be used to specify intervals
+```python[1-2|3-4|5-6|7-8]
+>>> re.search('[0-9]', "abc123abc")
+<re.Match object; span=(3, 4), match='1'>
+>>> re.search('[2-9]', "abc123abc")
+<re.Match object; span=(4, 5), match='2'>
+>>> re.search('[0-9][0-9][0-9]', "abc123abc")
+<re.Match object; span=(3, 6), match='123'>
+>>> re.search('[2-9][0-9]', "abc123abc")
+<re.Match object; span=(4, 6), match='23'>
+```
+--
+### Regular Expressions in Python
+Metacharacters - character classes
+- Can have all the characters enumerated:
+```python[1-2|3-4]
+>>> re.search('ab[cde]', "abc123abc")
+<re.Match object; span=(0, 3), match='abc'>
+>>> re.search('ab[cde]', "abd123abc")
+<re.Match object; span=(0, 3), match='abd'>
+```
+- Complement a character class by specifying `^` as the first
+character:
+```python
+>>> re.search('ab[^cde]', "abc abd abe abf")
+<re.Match object; span=(12, 15), match='abf'>
+```
+--
+### Regular Expressions in Python
+Metacharacters
+-  The dot (.) metacharacter matches any character except a newline,
+so it functions like a wildcard:
+```python[1-2|3-4]
+>>> re.search('1.3', "abc123abc")
+<re.Match object; span=(3, 6), match='123'>
+>>> print(re.search('foo.bar', 'foobar'))
+None
+```
+--
+### Regular Expressions in Python
+Metacharacters
+- Quantifiers:
+  - Indicates how many times that portion must occur for the match to succeed
+  - `*` matches zero or more repetitions of the preceding regex:
+  ```python[1-2|3-4|5-6]
+  >>> re.search('foo-*bar', 'foobar')  # Zero dashes
+  <re.Match object; span=(0, 6), match='foobar'>
+  >>> re.search('foo-*bar', 'foo-bar') # One dash
+  <re.Match object; span=(0, 7), match='foo-bar'>
+  >>> re.search('foo-*bar', 'foo--bar') # Two dashes
+  <re.Match object; span=(0, 8), match='foo--bar'>
+  ```
+  - `.*` This matches zero or more occurrences of any character:
+  ```python
+  >>> re.search('foo.*bar', '# foo $qux@grault % bar #')
+  <re.Match object; span=(2, 23), match='foo $qux@grault % bar'>
+  ```
+--
+### Regular Expressions in Python
+Metacharacters
+- Quantifiers:
+  - `+` matches one or more repetitions of the preceding regex;
+  - `?` matches zero or one repetitions of the preceding regex;
+  - `{m}` matches exactly `m` repetitions of the preceding regex;
+  - `{m,n}` matches any number of repetitions of the preceding regex
+  from `m` to `n`, inclusive.
+--
+### Regular Expressions in Python
+Metacharacters
+- Anchors: zero-width matches. 
+  - Don’t match any actual characters in the search string;
+  - Dictates a particular location in the search string where a match
+  must occur;
+  - `^` or `\A` anchor a match to the start of the text:
+  ```python[1-2|3-4]
+  >>> re.search('^foo', 'foobar')
+  <re.Match object; span=(0, 3), match='foo'>
+  >>> re.search('^foo', 'barfoo')
+  None
+  ```
+  - `$` or `\Z` anchor a match to the end of the text:
+  ```python[1-2|3-4]
+  >>> re.search('bar$', 'foobar')
+  <re.Match object; span=(3, 6), match='bar'>
+  >>> re.search('bar$', 'barfoo')
+  None
+  ```
+
+--
+### Regular Expressions
+Why are they so important?
+
+- Removing uninportant text:
+  - Use the `re.sub()` function;
+  - Strip all non alphanumerical characters:
+```python
+>>> re.sub('[^a-zA-Z0-9_]+', '', "foo1!bar#~2")
+'foo1bar2'
+```
+  - Remove all punctuation signs (`\s` represents any whitespace
+  character):
+```python
+>>> re.sub("[^a-zA-Z0-9_]\s",' ',"Foo. Bar? Foo.Bar")
+'Foo Bar Foo.Bar'
+```
+  - Remove all numbers from the text:
+```python
+>>> re.sub('[0-9]+', '', "Foo 123 Bar 456")
+'Foo  Bar '
+```
+---
+## Further Cleaning the Text
+<!-- .slide: data-background="#6d8ba7" -->
+Standard text mining procedures to extract useful features from the
+news contents, including:
+<ul>
+  <li><b>tokenization</b>,</li>
+  <li><b>removing stopwords</b>, and </li>
+  <li><b>lemmatization/stemming</b></li>
+</ul>
+--
+### Tokenization
+- The process of breaking strings into tokens which in turn are small
+structures or units;
+- Taking individual words rather than sentences breaks down the
+connections between words
+- It is efficient and convenient for computers to analyze
+- Most of the times, discovering what words appear in a text and
+counting the times that these words appear is sufficient to give
+insightful results;
+- Transforms a text into a list of words;
+- Remove useless information (using Regular Expressions!)
+--
+### Python [Natural Language Toolkit - NLTK](https://www.nltk.org/)
+- Leading platform for building Python programs to work with human
+language data
+- A wonderful tool for teaching, and working in, computational
+linguistics using Python;
+- Free reference [book](http://www.nltk.org/book/)
+- Open Source;
+```python
+>>> import nltk
+>>> nltk.download()
+```
+--
+### Python [Natural Language Toolkit - NLTK](https://www.nltk.org/)
+Tokenization
+```python[1-2|4-8|10-11]
+# importing word_tokenize from nltk
+from nltk.tokenize import word_tokenize
+
+text = """
+Ground control to Major Tom (10, 9, 8, 7).
+Commencing countdown, engines on (6, 5, 4, 3).
+Check ignition, and may God's love be with you (2, 1, lift off).
+"""
+token = word_tokenize(text)
+print(token)
+```
+```
+['Ground', 'control', 'to', 'Major', 'Tom', '(', '10', ',', '9', ',', '8', ',', '7', ')', '.', 'Commencing', 'countdown', ',', 'engines', 'on', (', '6', ',', '5', ',', '4', ',', '3', ')', '.', 'Check', 'ignition', ',', 'and', 'may', 'God', "'s", 'love', 'be', 'with', 'you', '(', '2', ',','1', ',', 'lift', 'off', ')', '.']
+```
+--
+### Python [Natural Language Toolkit - NLTK](https://www.nltk.org/)
+Cleaning Before Tokenization
+```python[1-2|4-5|7-8|10-12|14-16]
+# Remove non alphanumeric character 
+text = re.sub("[^a-zA-Z0-9]",' ',text)
+# Remove all numbers
+text = re.sub('[0-9]+', '', text)
+# Remove extra whitespaces
+text = re.sub('\s+', ' ', text)
+# Remove beginning and trailing whitespaces
+text = re.sub('^\s', '', text)
+text = re.sub('\s$', '', text)
+```
+--
+### Python [Natural Language Toolkit - NLTK](https://www.nltk.org/)
+Tokenization
+```python
+# Now tokenize
+token = word_tokenize(text)
+print(token)
+```
+```
+['Ground', 'control', 'to', 'Major', 'Tom', 'Commencing', 'countdown', 'engines', 'on', 'Check', 'ignition', 'and', 'may', 'God', 's', 'love','be', 'with', 'you', 'lift', 'off']
+```
+- Finding the frequency distinct in the tokens
+```python[1|3-4]
+from nltk.probability import FreqDist
+fdist = FreqDist(token)
+fdist
+```
+```
+FreqDist({'Ground': 1, 'control': 1, 'to': 1, 'Major': 1, 'Tom': 1, 'Commencing': 1, 'countdown': 1, 'engines': 1, 'on': 1, 'Check': 1, ...})
+```
+--
+### Python [Natural Language Toolkit - NLTK](https://www.nltk.org/)
+Tokenization
+- Let's Inspect the lines from
+[Ghostbusters](https://www.imdb.com/title/tt0087332/) from the
+[Cornell Movie Lines
+Corpus](https://www.cs.cornell.edu/~cristian/Cornell_Movie-Dialogs_Corpus.html):
+```python[1-3|5-6|8-10]
+# load data and concatenate all lyrics
+movie_db = pd.read_csv("./movie_lines_db.csv")
+ghostbusters_lines = movie_db[movie_db['movie_name']=='ghostbusters'].iloc[0,1]
+# tokenize
+token = word_tokenize(ghostbusters_lines)
+# build the frequency distribution and print the top 10 occurences:
+fdist = FreqDist(token)
+fdist.most_common(10)
+```
+```
+), ('I', 223), (',', 201), ('the', 162), ('?', 160), ('you', 158), ('to', 123), ('a', 110), ("'s", 85), ('it', 82)]
+```
+--
+
+### Removing Stop Words
+- Remove the useless words;
+- Words that frequently appear in many text fragments, but without
+significant meanings;
+- Do not provide any meaning and are usually removed from texts
+- e.g.: ‘I’, ‘the’, ‘a’, ‘of’
+- Import the stopwords from the NLTK library;
+--
+### Python [Natural Language Toolkit - NLTK](https://www.nltk.org/)
+Removing stopwords 
+- Continuing with the
+[Ghostbusters](https://www.imdb.com/title/tt0087332/) lines from the
+[Cornell Movie Lines
+Corpus](https://www.cs.cornell.edu/~cristian/Cornell_Movie-Dialogs_Corpus.html):
+```python
+# importing stopwors from nltk library
+from nltk import word_tokenize
+from nltk.corpus import stopwords
+english_stopwords = set(stopwords.words('english'))
+# Create list of tokens coverting all text to lower case
+ghostbusters_token = word_tokenize(ghostsbusters_lines.lower())
+# List words from lines that are not in the set of stopwords
+clean_lines = [word for word in ghostbusters_token if word not in
+english_stopwords]
+print(clean_lines)
+```
+```
+["'s", 'matter', ',', 'dear', '?', 'uuuuuuugh', '!', '!', 'hey', ',',
+'sweetheart', ',', 'cut',...]
+```
+--
+
+### Stemming
+- refers to normalizing words into its base form or root form;
+- two methods in Stemming namely, Porter Stemming (removes common
+morphological and inflectional endings from words) and Lancaster
+Stemming (a more aggressive stemming algorithm)
+--
+### Python [Natural Language Toolkit - NLTK](https://www.nltk.org/)
+Removing stopwords 
+- Continuing with the
+[Ghostbusters](https://www.imdb.com/title/tt0087332/) lines from the
+[Cornell Movie Lines
+Corpus](https://www.cs.cornell.edu/~cristian/Cornell_Movie-Dialogs_Corpus.html):
+```python
+# Importing Porterstemmer from nltk library
+from nltk.stem import PorterStemmer
+pst = PorterStemmer()
+
+stemmed_tokens = [pst.stem(word) for word in clean_lines]
+print(stemmed_tokes)
+```
+```
+[...,'probabl', 'would', "'ve", '.', "n't", 'glad', 'wait', '?','go', 'say', '``', 'eight', '.', "''", "'re", 'fantast', '!','eight', "o'clock", '', 'okay', '.', 'give', 'second', '.','leav',...]
+```
+---
+## Sentiment Analysis
+<!-- .slide: data-background="#6d8ba7" -->
+--
+### Sentiment Analysis
+- Also known as opinion mining;
+- Used to determine whether data is positive, negative or neutral;
+  - focus on polarity (positive, negative, neutral);
+- Help businesses monitor brand and product sentiment in customer
+feedback, and understand customer needs;
+- Can use heavy Machine Learning techniques, such as Artificial
+Neural Networks, or can be based on Rules;
+--
+### Sentiment Analysis
+Rule Based
+- Include various NLP techniques developed in computational
+linguistics, such as: Stemming, Tokenization, and Text cleaning;
+- Use of Sentiment Lexicons (i.e. lists of words and expressions);
+- Very naive since they don't take into account how words are
+combined in a sequence;
+  - Leave out the context;
+- Often require fine-tuning and maintenance;
+--
+### Python Sentiment Analysis
+After cleaning, tokenizing and stemming the text:
+- Use well-known lexicons, e.g.: [The subjectivity
+lexicon](http://mpqa.cs.pitt.edu/lexicons/subj_lexicon/) or the 
+[Valence Aware Dictionary and sEntiment Reasoner -
+VADER](https://github.com/cjhutto/vaderSentiment)
+```python[1-4|6-7|9-11|13-14]
+# first load VADER
+import nltk
+from nltk.sentiment.vader import SentimentIntensityAnalyzer
+nltk.download('vader_lexicon')
+# instantiate the sentiment analyzer:
+vader = SentimentIntensityAnalyzer()
+# check scores for some phrases:
+print(vader.polarity_scores("This was the best idea I've had in a long time"))
+{'neg': 0.0, 'neu': 0.682, 'pos': 0.318, 'compound': 0.6369}
+print(vader.polarity_scores("This was the worst idea I've had in a long time"))
+{'neg': 0.313, 'neu': 0.687, 'pos': 0.0, 'compound': -0.6249}
+```
+---
+
+<!-- .slide: data-background="#6d8ba7" -->
+## Embedding
+--
+
+### Bag of Words (BoW): Overview
+
+- A simple and widely used method to represent **textual data**
+- Transforms a collection of text documents into **numerical feature vectors**
+- Ignores **grammar**, **word order**, and **context**
+- Keeps track only of **word occurrence (frequency or presence)**
+--
+
+**Steps:**
+1. Build a **vocabulary** of unique words from the dataset
+2. Represent each document as a vector:
+   - Each element = count of a word in that document
+
+<span class="highlight">Example:</span>  
+Docs = ["I love AI", "AI loves me"]  
+Vocabulary = ["I", "love", "AI", "loves", "me"]  
+Vectors =  
+- Doc1 → [1, 1, 1, 0, 0]  
+- Doc2 → [0, 0, 1, 1, 1]
+--
+
+### Bag of Words: Pros, Cons & Variants
+
+**Advantages:**
+- Simple to understand and implement
+- Works well for many classification and clustering tasks
+
+**Limitations:**
+- Ignores **word order** and **semantics**
+- Produces **sparse**, high-dimensional vectors
+- Cannot capture context or meaning
+<span class="highlight">BoW is a great starting point for text modeling, but often needs enhancements for deeper insights.</span>
+--
+
+### TF-IDF: Term Frequency–Inverse Document Frequency
+
+TF-IDF is a technique to weigh the importance of a word in a document **relative to a collection** of documents.
+
+**Formula:**  
+TF-IDF(word, doc) = TF(word, doc) × IDF(word)
+
+- **TF (Term Frequency):** How often the word appears in the document
+- **IDF (Inverse Document Frequency):** Penalizes words common across many documents
+--
+
+**Key Idea:**  
+<span class="highlight">Words that appear often in one document but rarely across others are more meaningful.</span>
+
+--
+**Example Vocabulary (3 documents):**
+
+| Term  | Doc1 | Doc2 | Doc3 |
+|-------|------|------|------|
+| AI    | 3    | 0    | 2    |
+| love  | 2    | 1    | 0    |
+| the   | 4    | 3    | 4    |
+
+- "the" appears in every doc → gets **low IDF**
+- "AI" is frequent in Doc1/3 → gets **high TF-IDF**
+--
+
+### TF-IDF: Importance in Information Retrieval
+
+- Used by **search engines** to score and rank documents
+- Helps distinguish **relevant** vs **irrelevant** results
+- Improves retrieval by down-weighting common (uninformative) terms
+
+**Use case: Querying "AI learning"**
+--
+
+TF-IDF helps:
+- Boost documents that use both terms with high specificity
+- Ignore common words like "the", "is", or "and"
+
+**Why it matters:**
+- <span class="highlight">Simple yet powerful method for document relevance scoring</span>
+- Foundation for modern search and recommendation engines
+
+**Limitations:**
+- Doesn’t capture semantics or word meaning
+- Assumes independence between terms
+--
+
+### Bigrams: Capturing Word Sequences
+
+- A **bigram** is a sequence of two consecutive words  
+- Helps preserve some **context and structure** lost in standard Bag of Words
+
+**Why use bigrams?**
+- Unigrams: "New", "York", "Times" → lose meaning
+- Bigrams: "New York", "York Times" → preserve key phrases
+--
+
+**Example:**
+Text = "machine learning is powerful"
+
+**Unigrams:**  
+["machine", "learning", "is", "powerful"]
+
+**Bigrams:**  
+["machine learning", "learning is", "is powerful"]
+
+**Benefit:**  
+- <span class="highlight">Improves text representation by capturing local word dependencies</span>
+- Enhances models for classification, sentiment analysis, and search
+
+Be mindful of dimensionality—bigrams increase vocabulary size!
+--
+
+### Bag of Words with Bigrams: Example
+
+**Two documents:**
+
+- Doc1: "I love machine learning"
+- Doc2: "machine learning is fun"
+--
+
+**Step 1: Build the vocabulary (unigrams + bigrams)**
+
+Vocabulary:  
+["I", "love", "machine", "learning", "is", "fun",  
+ "I love", "love machine", "machine learning", "learning is", "is fun"]
+--
+
+**Step 2: Convert each document into a vector**
+
+- Doc1 →  
+  [1, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0]
+
+- Doc2 →  
+  [0, 0, 1, 1, 1, 1, 0, 0, 1, 1, 1]
+
+Each entry = word or phrase count in the document
+
+--
+
+<span class="highlight">Bigrams help distinguish phrases like "machine learning" from just "machine" + "learning"</span>
+--
+
+<!-- .slide: data-background="#ffffff" -->
+### Grouping Documents: Cosine Similarity
+
+Once documents are converted into vectors (e.g., with BoW or TF-IDF), we can measure their **similarity** using:
+
+####  Cosine Similarity:
+
+<div style="text-align: center;"><img class="fragment" style="width: 300px;" src="img/cosine.png"/></div>
+
+- Measures the **angle** between two vectors, not magnitude
+- Ranges from **0** (completely different) to **1** (identical direction)
+--
+
+<!-- .slide: data-background="#ffffff" -->
+###  Cosine Similarity:
+<div style="text-align: center;"><img class="fragment" src="img/cosine2.png"/></div>
+--
+
+**Example:**
+- Doc1 vector = [1, 1, 0, 1]
+- Doc2 vector = [1, 0, 1, 1]
+
+**Cosine similarity** ≈ 0.75 → they are quite similar
+
+<span class="highlight">Cosine similarity works well for high-dimensional, sparse text vectors</span>
+--
+
+### Word2Vec: Turning Words into Vectors
+
+Traditional BoW/TF-IDF ignore context and word meaning.
+
+**Word2Vec** learns word embeddings that capture:
+- **Semantic similarity** (words with similar meanings are close)
+- **Syntactic relationships** (e.g., verb tenses, plural forms)
+--
+
+**Core Idea:**  
+<span class="highlight">Words used in similar contexts have similar meanings</span>  
+→ “You shall know a word by the company it keeps” (Firth, 1957)
+
+**Example:**  
+- "Paris" and "Rome" appear near words like "capital", "city", "Europe"  
+→ Their vectors become close in the embedding space
+--
+
+## Word2Vec Models: CBOW vs Skip-Gram
+
+Word2Vec uses shallow neural networks to learn embeddings with **Two Training Approaches:**
+
+**CBOW (Continuous Bag of Words):**  
+- Predicts a target word from surrounding context  
+- Faster, better for large datasets
+
+**Skip-Gram:**  
+- Predicts context words from a target word  
+- Works well with small datasets or rare words
+--
+
+**Example Sentence:**  
+"The quick brown fox jumps"
+
+- CBOW: context = ["the", "brown"], predict = "quick"
+- Skip-Gram: input = "quick", predict = "the", "brown"
+
+<span class="highlight">Result: Each word gets a vector that reflects its linguistic use</span>
+--
+
+### Word2Vec in Action: Applications & Examples
+
+**Applications:**
+- Document classification
+- Similarity search (e.g., "movies like X")
+- Sentiment analysis
+- Question answering, autocomplete
+
+--
+
+**Famous Analogy Example:**
+
+vector("king") - vector("man") + vector("woman") aprox. vector("queen")
+
+
+This works because:
+- Word2Vec captures **relational structure** in the vector space
+
+--
+
+**Visualization:**
+- t-SNE or PCA can project high-dimensional word vectors into 2D  
+- Clusters emerge: countries, cities, animals, tech terms, etc.
+
+<span class="highlight">Word2Vec made it possible to “reason” with language numerically</span>
+
+
+
+---
+## Questions?
+<!-- .slide: data-background="#6d8ba7" -->
+---
+## References
+--
+### Examples mainly taken from: 
+- https://towardsdatascience.com/fine-grained-sentiment-analysis-in-python-part-1-2697bb111ed4
+- https://monkeylearn.com/sentiment-analysis/
+- https://medium.com/towards-artificial-intelligence/text-mining-in-python-steps-and-examples-78b3f8fd913b
+- https://towardsdatascience.com/a-step-by-step-tutorial-for-conducting-sentiment-analysis-a7190a444366
+- https://towardsdatascience.com/getting-started-with-text-analysis-in-python-ca13590eb4f7
+--
+### Some books:
+- Ingersoll, Grant, Thomas Morton, and Andrew Farris. "Taming text." How to Find, Organize, and Manipulate It, Shelter Island, NY/London (2013).
+- BIRD, Steven; KLEIN, Ewan; LOPER, Edward. Natural language processing with Python: analyzing text with the natural language toolkit. " O'ReillyMedia, Inc.", 2009.
+- VASILIEV, Yuli. Natural Language Processing with Python and SpaCy: A Practical Introduction. No Starch Press, 2020.
+- BENGFORT, Benjamin; BILBRO, Rebecca; OJEDA, Tony. Applied text analysis with python: Enabling language-aware data products with machinelearning. " O'Reilly Media, Inc.", 2018.
+---
+## Thanks!
+<!-- .slide: data-background="#6d8ba7" -->
+<br/><br/><br/><br/>
+#### raphaelmcobe@gmail.com
+#### [@raphaelmcobe](twitter.com/raphaelmcobe)
+#### [CODATA-RDA Data Science Schools](https://www.datascienceschools.org/)
 
         </textarea>
       </section>
@@ -607,6 +765,10 @@
                                 hash: true,
                                 width: 1280,
                                 height: 720,
+                                math: {
+                                  mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js',
+                                  config: 'TeX-AMS_HTML',
+                                },
                                 // Learn about plugins: https://revealjs.com/plugins/
                                 plugins: [ RevealZoom, RevealNotes, RevealSearch, RevealMarkdown, RevealHighlight ]
                         });
